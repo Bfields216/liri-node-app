@@ -37,14 +37,14 @@ if (userCommand === "concert-this") {
         } else if (command === "movie-this") {
             movie = dataArr[1];
             moviethis();
-        }
+        } dowhatitsays();
     })
 }
 
 
 
 
-function moviethis() {
+function moviethis(input) {
     if (!movie) {
         axios.get("https://www.omdbapi.com/?t=Mr.Nobody&apikey=trilogy").then(
             function (response) {
@@ -61,15 +61,15 @@ function moviethis() {
 
     } else {
         axios.get("https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy").then(
-            function (reponse) {
+            function (response) {
                 console.log((response.data.Title).toUpperCase())
                 console.log(response.data.Year);
-                console.log("IMDB: " + response.data.imdbRating);
+                console.log("IMDB Rating: " + response.data.imdbRating);
                 console.log(response.data.Ratings[1].Source + ": " + response.data.Ratings[1].Value);
                 console.log("Produced in " + response.data.Country);
-                console.log("Language: " + response.data.Language);
+                console.log("Language released in: " + response.data.Language);
                 console.log("Plot: " + response.data.Plot);
-                console.log(response.data.Actors);
+                console.log("People in the movie:" + response.data.Actors);
             }
         )
 
@@ -102,11 +102,27 @@ function spotifyThis() {
         for (i = 0; i < data.tracks.items.length; i++) {
             fs.appendFile("sample.txt", JSON.stringify(
                 console.log("*" + (data.tracks.items[i].name).toUpperCase() + "*"),
-                console.log("ARTIST: " + data.tracks.items[i].artists[0].name),
-                console.log("ALBUM: " + data.tracks.items[i].album.name),
-                console.log(data.tracks.items[i].external_urls.spotify),
-                console.log("")), function (error) {
+                console.log("Artist: " + data.tracks.items[i].artists[0].name),
+                console.log("Album: " + data.tracks.items[i].album.name),
+                console.log("Link:" + data.tracks.items[i].external_urls.spotify),
+                console.log("")), {
                 });
         };
     });
+}
+
+function dowhatitsays(){
+    fs.readFile("random.txt", "utf8", function(error, data){
+
+        var randomArray = data.split(",");
+
+        var parameterArray = []
+        if(randomArray[0] === "spotify-this-song"){
+            for (let i = 1; i < randomArray.length; i++){
+                parameterArray.push(randomArray[i]);
+            }
+            var parameter = parameterArray.join("+");
+            spotifyThis(keys, Spotify, parameter);
+        }
+    })
 }
